@@ -3,124 +3,124 @@ using System;
 namespace Estructuras_de_Datos_Arboles
 {
     // =========================================================================
-    // ÁRBOL BINARIO DE BÚSQUEDA (BST / ABB):
-    // Estructura jerárquica no lineal donde:
-    // - Los valores menores van a la izquierda (current.Left)
-    // - Los valores mayores van a la derecha (current.Right)
+    // BINARY SEARCH TREE (BST):
+    // Hierarchical, non-linear data structure where:
+    // - Smaller values are placed in the left subtree (current.Left)
+    // - Larger values are placed in the right subtree (current.Right)
     // =========================================================================
     public class BinarySearchTree
     {
-        public Node? Root; // Puntero inicial / Raíz del árbol
-        public string UltimoMensajeCaso = ""; // Almacena el caso ejecutado para la presentación
+        public Node? Head; // Root reference / entry point of the tree
+        public string LastCaseMessage = ""; // Stores the specific executed case description
 
         public BinarySearchTree()
         {
-            Root = null; // Árbol inicialmente vacío
+            Head = null; // Initially empty tree
         }
 
         // =====================================================================
-        // MÉTODO ADD (INSERTAR)
+        // METHOD: ADD (INSERTION)
         // =====================================================================
         public bool Add(int id)
         {
             Node newNode = new Node(id);
 
-            // CASO 1: Árbol vacío. Head apunta a newNode.
-            if (Root == null)
+            // CASE 1: Tree is empty. Head points directly to newNode.
+            if (Head == null)
             {
-                Root = newNode;
-                UltimoMensajeCaso = $"[Caso 1: Árbol Vacío] Se asignó Head = newNode ({id})";
+                Head = newNode;
+                LastCaseMessage = $"[Case 1: Empty Tree] Assigned Head = newNode ({id})";
                 return true;
             }
 
-            // CASO 2 y 3: Recorrido con 'current' buscando posición libre
-            Node current = Root;
+            // CASE 2 & 3: Traverse using 'current' to find an empty spot
+            Node current = Head;
 
             while (true)
             {
-                // CASO 2: El nuevo dato es MENOR -> ir a la izquierda
+                // CASE 2: New value is SMALLER -> go left
                 if (newNode.Id < current.Id)
                 {
                     if (current.Left == null)
                     {
-                        current.Left = newNode; // Se enlaza como hijo izquierdo
-                        UltimoMensajeCaso = $"[Caso 2: Menor que {current.Id}] Se insertó {id} en current.Left";
+                        current.Left = newNode; // Link as left child
+                        LastCaseMessage = $"[Case 2: Less than {current.Id}] Inserted {id} at current.Left";
                         return true;
                     }
-                    current = current.Left; // Avanzar el puntero current hacia la izquierda
+                    current = current.Left; // Move pointer to the left subtree
                 }
-                // CASO 3: El nuevo dato es MAYOR -> ir a la derecha
+                // CASE 3: New value is LARGER -> go right
                 else if (newNode.Id > current.Id)
                 {
                     if (current.Right == null)
                     {
-                        current.Right = newNode; // Se enlaza como hijo derecho
-                        UltimoMensajeCaso = $"[Caso 3: Mayor que {current.Id}] Se insertó {id} en current.Right";
+                        current.Right = newNode; // Link as right child
+                        LastCaseMessage = $"[Case 3: Greater than {current.Id}] Inserted {id} at current.Right";
                         return true;
                     }
-                    current = current.Right; // Avanzar el puntero current hacia la derecha
+                    current = current.Right; // Move pointer to the right subtree
                 }
-                // CASO 4: Clave duplicada -> no se inserta
+                // CASE 4: Duplicate key -> do not insert
                 else
                 {
-                    UltimoMensajeCaso = $"[Caso 4: Clave Duplicada] El Id {id} ya existe en el árbol.";
+                    LastCaseMessage = $"[Case 4: Duplicate Key] Id {id} already exists in the tree.";
                     return false;
                 }
             }
         }
 
         // =====================================================================
-        // MÉTODO SEARCH (BUSCAR / VERIFICAR SI EXISTE)
+        // METHOD: SEARCH (VERIFY EXISTENCE)
         // =====================================================================
         public bool Search(int id)
         {
-            // CASO 1: Árbol vacío
-            if (Root == null)
+            // CASE 1: Tree is empty
+            if (Head == null)
             {
-                UltimoMensajeCaso = "[Caso 1: Búsqueda] Árbol vacío (Head == null).";
+                LastCaseMessage = "[Case 1: Search] Tree is empty (Head == null).";
                 return false;
             }
 
-            Node? current = Root;
+            Node? current = Head;
 
             while (current != null)
             {
-                // CASO 2: Dato encontrado
+                // CASE 2: Value found
                 if (current.Id == id)
                 {
-                    UltimoMensajeCaso = $"[Caso 2: Búsqueda] ¡Encontrado! current.Id == {id}";
+                    LastCaseMessage = $"[Case 2: Search] Found! current.Id == {id}";
                     return true;
                 }
 
-                // CASO 3: El buscado es menor -> ir a la izquierda
+                // CASE 3: Target value is smaller -> traverse left
                 if (id < current.Id)
                 {
                     current = current.Left;
                 }
-                // CASO 4: El buscado es mayor -> ir a la derecha
+                // CASE 4: Target value is larger -> traverse right
                 else
                 {
                     current = current.Right;
                 }
             }
 
-            // CASO 5: Llegamos a null, no existe
-            UltimoMensajeCaso = $"[Caso 5: Búsqueda] El Id {id} no existe en el árbol.";
+            // CASE 5: Reached null -> target does not exist
+            LastCaseMessage = $"[Case 5: Search] Id {id} not found in the tree.";
             return false;
         }
 
         // =====================================================================
-        // MÉTODO REMOVE (ELIMINAR) - CUBRE LOS 3 CASOS CLÁSICOS
+        // METHOD: REMOVE (DELETION COVERING THE 3 CLASSICAL CASES)
         // =====================================================================
         public bool Remove(int id)
         {
             if (!Search(id))
             {
-                UltimoMensajeCaso = $"No se puede eliminar: El Id {id} no existe.";
+                LastCaseMessage = $"Cannot remove: Id {id} does not exist.";
                 return false;
             }
 
-            Root = RemoveRecursive(Root, id);
+            Head = RemoveRecursive(Head, id);
             return true;
         }
 
@@ -128,7 +128,7 @@ namespace Estructuras_de_Datos_Arboles
         {
             if (current == null) return null;
 
-            // Fase de búsqueda
+            // Search phase
             if (id < current.Id)
             {
                 current.Left = RemoveRecursive(current.Left, id);
@@ -139,89 +139,53 @@ namespace Estructuras_de_Datos_Arboles
             }
             else
             {
-                // ¡Nodo encontrado! Se analizan los 3 casos:
+                // Node found! Evaluate the 3 deletion cases:
 
-                // CASO 1: Nodo Hoja (0 hijos)
+                // CASE 1: Leaf node (no children)
                 if (current.Left == null && current.Right == null)
                 {
-                    UltimoMensajeCaso = $"[Caso 1: Eliminar Hoja] Se eliminó el nodo hoja ({id})";
-                    return null; // Se desliga devolviendo null
+                    LastCaseMessage = $"[Case 1: Delete Leaf] Removed leaf node ({id})";
+                    return null; // Unlink node by returning null to parent
                 }
 
-                // CASO 2: Nodo con UN solo hijo
+                // CASE 2: Node with ONE child
                 if (current.Left == null)
                 {
-                    UltimoMensajeCaso = $"[Caso 2: Eliminar con 1 Hijo] El nodo ({id}) fue reemplazado por su hijo derecho ({current.Right!.Id})";
-                    return current.Right; // El hijo derecho sube
+                    LastCaseMessage = $"[Case 2: Delete with 1 Child] Node ({id}) replaced by right child ({current.Right!.Id})";
+                    return current.Right; // Right child moves up
                 }
                 if (current.Right == null)
                 {
-                    UltimoMensajeCaso = $"[Caso 2: Eliminar con 1 Hijo] El nodo ({id}) fue reemplazado por su hijo izquierdo ({current.Left!.Id})";
-                    return current.Left; // El hijo izquierdo sube
+                    LastCaseMessage = $"[Case 2: Delete with 1 Child] Node ({id}) replaced by left child ({current.Left!.Id})";
+                    return current.Left; // Left child moves up
                 }
 
-                // CASO 3: Nodo con DOS hijos
-                // Estrategia: Buscar el Sucesor InOrden (el menor valor del subárbol derecho)
-                Node sucesor = current.Right!;
-                while (sucesor.Left != null)
+                // CASE 3: Node with TWO children
+                // Strategy: Find the Inorder Successor (smallest value in the right subtree)
+                Node successor = current.Right!;
+                while (successor.Left != null)
                 {
-                    sucesor = sucesor.Left;
+                    successor = successor.Left;
                 }
 
-                UltimoMensajeCaso = $"[Caso 3: Eliminar con 2 Hijos] El nodo ({id}) fue reemplazado por su sucesor inorden ({sucesor.Id})";
+                LastCaseMessage = $"[Case 3: Delete with 2 Children] Node ({id}) replaced by inorder successor ({successor.Id})";
 
-                // Copiar el valor del sucesor al nodo actual
-                current.Id = sucesor.Id;
+                // Copy successor value to current node
+                current.Id = successor.Id;
 
-                // Eliminar el nodo sucesor original de la derecha
-                current.Right = RemoveRecursive(current.Right, sucesor.Id);
+                // Recursively delete the original successor node from right subtree
+                current.Right = RemoveRecursive(current.Right, successor.Id);
             }
 
             return current;
         }
 
         // =====================================================================
-        // RECORRIDOS (InOrden, PreOrden, PostOrden)
-        // =====================================================================
-        public string GetInOrder()
-        {
-            return InOrderRecursive(Root).Trim();
-        }
-
-        private string InOrderRecursive(Node? current)
-        {
-            if (current == null) return "";
-            return $"{InOrderRecursive(current.Left)}{current.Id} {InOrderRecursive(current.Right)}";
-        }
-
-        public string GetPreOrder()
-        {
-            return PreOrderRecursive(Root).Trim();
-        }
-
-        private string PreOrderRecursive(Node? current)
-        {
-            if (current == null) return "";
-            return $"{current.Id} {PreOrderRecursive(current.Left)}{PreOrderRecursive(current.Right)}";
-        }
-
-        public string GetPostOrder()
-        {
-            return PostOrderRecursive(Root).Trim();
-        }
-
-        private string PostOrderRecursive(Node? current)
-        {
-            if (current == null) return "";
-            return $"{PostOrderRecursive(current.Left)}{PostOrderRecursive(current.Right)}{current.Id} ";
-        }
-
-        // =====================================================================
-        // MÉTRICAS DEL ÁRBOL
+        // METRICS
         // =====================================================================
         public int Count()
         {
-            return CountRecursive(Root);
+            return CountRecursive(Head);
         }
 
         private int CountRecursive(Node? current)
@@ -232,15 +196,15 @@ namespace Estructuras_de_Datos_Arboles
 
         public int GetHeight()
         {
-            return HeightRecursive(Root);
+            return HeightRecursive(Head);
         }
 
         private int HeightRecursive(Node? current)
         {
             if (current == null) return 0;
-            int hLeft = HeightRecursive(current.Left);
-            int hRight = HeightRecursive(current.Right);
-            return Math.Max(hLeft, hRight) + 1;
+            int leftHeight = HeightRecursive(current.Left);
+            int rightHeight = HeightRecursive(current.Right);
+            return Math.Max(leftHeight, rightHeight) + 1;
         }
     }
 }

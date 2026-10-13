@@ -1,16 +1,23 @@
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace Estructuras_de_Datos_Arboles
 {
+    // =========================================================================
+    // FORM1 CLASS (VIEW / USER INTERFACE):
+    // Responsibility: Manages user interface controls and events.
+    // Delegates:
+    // - Data structure logic to 'BinarySearchTree'
+    // - Depth-first traversals to 'TreeTraversals'
+    // - Visual rendering to 'TreeRenderer'
+    // =========================================================================
     public partial class Form1 : Form
     {
-        private BinarySearchTree arbol = new BinarySearchTree();
-        private int? nodoResaltado = null; // Id del nodo encontrado al buscar
+        private BinarySearchTree tree = new BinarySearchTree();
+        private int? highlightedNode = null; // Id of the node to highlight upon search
 
-        // Controles estándar de Windows Forms (sin estilos personalizados)
+        // Interface controls
         private Label lblId = null!;
         private TextBox txtId = null!;
         private Button btnAdd = null!;
@@ -22,38 +29,27 @@ namespace Estructuras_de_Datos_Arboles
         private Button btnPreOrder = null!;
         private Button btnPostOrder = null!;
 
-        private Label lblCaso = null!;
-        private Label lblRecorrido = null!;
-        private Label lblInfo = null!;
+        private Label lblStatus = null!;
+        private Label lblTraversal = null!;
+        private Label lblMetrics = null!;
 
-        private DoubleBufferedPanel panelLienzo = null!;
+        private DoubleBufferedPanel canvasPanel = null!;
 
         public Form1()
         {
             InitializeComponent();
-            ConfigurarInterfazSimple();
+            SetupInterface();
         }
 
-        private void ConfigurarInterfazSimple()
+        private void SetupInterface()
         {
-            // Propiedades nativas del formulario
-            this.Text = "Árbol Binario de Búsqueda";
+            this.Text = "Binary Search Tree";
             this.Size = new Size(1000, 650);
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            // Fila superior de controles nativos
-            lblId = new Label
-            {
-                Text = "Id:",
-                Location = new Point(20, 20),
-                AutoSize = true
-            };
-
-            txtId = new TextBox
-            {
-                Location = new Point(50, 17),
-                Width = 70
-            };
+            // Top control row
+            lblId = new Label { Text = "Id:", Location = new Point(20, 20), AutoSize = true };
+            txtId = new TextBox { Location = new Point(50, 17), Width = 70 };
             txtId.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
@@ -63,52 +59,34 @@ namespace Estructuras_de_Datos_Arboles
                 }
             };
 
-            // Botones nativos estándar (estilo clásico de Windows)
-            btnAdd = new Button { Text = "Agregar", Location = new Point(135, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
+            btnAdd = new Button { Text = "Add", Location = new Point(135, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
             btnAdd.Click += BtnAdd_Click;
 
-            btnSearch = new Button { Text = "Buscar", Location = new Point(220, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
+            btnSearch = new Button { Text = "Search", Location = new Point(220, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
             btnSearch.Click += BtnSearch_Click;
 
-            btnRemove = new Button { Text = "Eliminar", Location = new Point(305, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
+            btnRemove = new Button { Text = "Remove", Location = new Point(305, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
             btnRemove.Click += BtnRemove_Click;
 
-            btnClear = new Button { Text = "Limpiar", Location = new Point(390, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
+            btnClear = new Button { Text = "Clear", Location = new Point(390, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
             btnClear.Click += BtnClear_Click;
 
-            btnInOrder = new Button { Text = "InOrden", Location = new Point(500, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
-            btnInOrder.Click += (s, e) => MostrarRecorrido("InOrden", arbol.GetInOrder());
+            btnInOrder = new Button { Text = "InOrder", Location = new Point(500, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
+            btnInOrder.Click += (s, e) => ShowTraversal("InOrder", TreeTraversals.InOrder(tree.Head));
 
-            btnPreOrder = new Button { Text = "PreOrden", Location = new Point(585, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
-            btnPreOrder.Click += (s, e) => MostrarRecorrido("PreOrden", arbol.GetPreOrder());
+            btnPreOrder = new Button { Text = "PreOrder", Location = new Point(585, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
+            btnPreOrder.Click += (s, e) => ShowTraversal("PreOrder", TreeTraversals.PreOrder(tree.Head));
 
-            btnPostOrder = new Button { Text = "PostOrden", Location = new Point(670, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
-            btnPostOrder.Click += (s, e) => MostrarRecorrido("PostOrden", arbol.GetPostOrder());
+            btnPostOrder = new Button { Text = "PostOrder", Location = new Point(670, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
+            btnPostOrder.Click += (s, e) => ShowTraversal("PostOrder", TreeTraversals.PostOrder(tree.Head));
 
-            // Etiquetas de información y casos
-            lblCaso = new Label
-            {
-                Text = "Estado: Árbol vacío.",
-                Location = new Point(20, 55),
-                AutoSize = true
-            };
+            // Informational status labels
+            lblStatus = new Label { Text = "Status: Tree is empty.", Location = new Point(20, 55), AutoSize = true };
+            lblTraversal = new Label { Text = "Traversal: None", Location = new Point(400, 55), AutoSize = true };
+            lblMetrics = new Label { Text = "Nodes: 0 | Height: 0", Location = new Point(800, 55), AutoSize = true };
 
-            lblRecorrido = new Label
-            {
-                Text = "Recorrido: Ninguno",
-                Location = new Point(400, 55),
-                AutoSize = true
-            };
-
-            lblInfo = new Label
-            {
-                Text = "Nodos: 0 | Altura: 0",
-                Location = new Point(800, 55),
-                AutoSize = true
-            };
-
-            // Área de dibujo (fondo blanco estándar con borde simple)
-            panelLienzo = new DoubleBufferedPanel
+            // Drawing canvas panel
+            canvasPanel = new DoubleBufferedPanel
             {
                 Location = new Point(20, 85),
                 Size = new Size(945, 500),
@@ -116,9 +94,8 @@ namespace Estructuras_de_Datos_Arboles
                 BackColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle
             };
-            panelLienzo.Paint += PanelLienzo_Paint;
+            canvasPanel.Paint += CanvasPanel_Paint;
 
-            // Agregar los controles a la ventana
             this.Controls.Add(lblId);
             this.Controls.Add(txtId);
             this.Controls.Add(btnAdd);
@@ -128,26 +105,26 @@ namespace Estructuras_de_Datos_Arboles
             this.Controls.Add(btnInOrder);
             this.Controls.Add(btnPreOrder);
             this.Controls.Add(btnPostOrder);
-            this.Controls.Add(lblCaso);
-            this.Controls.Add(lblRecorrido);
-            this.Controls.Add(lblInfo);
-            this.Controls.Add(panelLienzo);
+            this.Controls.Add(lblStatus);
+            this.Controls.Add(lblTraversal);
+            this.Controls.Add(lblMetrics);
+            this.Controls.Add(canvasPanel);
         }
 
         // =====================================================================
-        // EVENTOS DE BOTONES
+        // EVENT HANDLERS (DELEGATE TO APPROPRIATE CLASSES)
         // =====================================================================
         private void BtnAdd_Click(object? sender, EventArgs e)
         {
             if (int.TryParse(txtId.Text, out int id))
             {
-                bool agregado = arbol.Add(id);
-                nodoResaltado = agregado ? id : null;
-                lblCaso.Text = "Estado: " + arbol.UltimoMensajeCaso;
-                ActualizarInfo();
+                bool added = tree.Add(id);
+                highlightedNode = added ? id : null;
+                lblStatus.Text = "Status: " + tree.LastCaseMessage;
+                UpdateMetrics();
                 txtId.Clear();
                 txtId.Focus();
-                panelLienzo.Invalidate();
+                canvasPanel.Invalidate();
             }
         }
 
@@ -155,10 +132,10 @@ namespace Estructuras_de_Datos_Arboles
         {
             if (int.TryParse(txtId.Text, out int id))
             {
-                bool encontrado = arbol.Search(id);
-                nodoResaltado = encontrado ? id : null;
-                lblCaso.Text = "Estado: " + arbol.UltimoMensajeCaso;
-                panelLienzo.Invalidate();
+                bool found = tree.Search(id);
+                highlightedNode = found ? id : null;
+                lblStatus.Text = "Status: " + tree.LastCaseMessage;
+                canvasPanel.Invalidate();
             }
         }
 
@@ -166,105 +143,41 @@ namespace Estructuras_de_Datos_Arboles
         {
             if (int.TryParse(txtId.Text, out int id))
             {
-                arbol.Remove(id);
-                nodoResaltado = null;
-                lblCaso.Text = "Estado: " + arbol.UltimoMensajeCaso;
-                ActualizarInfo();
+                tree.Remove(id);
+                highlightedNode = null;
+                lblStatus.Text = "Status: " + tree.LastCaseMessage;
+                UpdateMetrics();
                 txtId.Clear();
-                panelLienzo.Invalidate();
+                canvasPanel.Invalidate();
             }
         }
 
         private void BtnClear_Click(object? sender, EventArgs e)
         {
-            arbol.Root = null;
-            nodoResaltado = null;
-            lblCaso.Text = "Estado: Árbol vaciado.";
-            lblRecorrido.Text = "Recorrido: Ninguno";
-            ActualizarInfo();
-            panelLienzo.Invalidate();
+            tree.Head = null;
+            highlightedNode = null;
+            lblStatus.Text = "Status: Tree cleared (Head = null).";
+            lblTraversal.Text = "Traversal: None";
+            UpdateMetrics();
+            canvasPanel.Invalidate();
         }
 
-        private void MostrarRecorrido(string tipo, string resultado)
+        private void ShowTraversal(string type, string result)
         {
-            lblRecorrido.Text = $"Recorrido {tipo}: [ {resultado} ]";
+            lblTraversal.Text = $"Traversal {type}: [ {(string.IsNullOrWhiteSpace(result) ? "Empty" : result.Trim())} ]";
         }
 
-        private void ActualizarInfo()
+        private void UpdateMetrics()
         {
-            lblInfo.Text = $"Nodos: {arbol.Count()} | Altura: {arbol.GetHeight()}";
+            lblMetrics.Text = $"Nodes: {tree.Count()} | Height: {tree.GetHeight()}";
         }
 
         // =====================================================================
-        // DIBUJO SIMPLE DEL ÁRBOL (Líneas negras y círculos blancos estándar)
+        // RENDERING (DELEGATED TO TreeRenderer)
         // =====================================================================
-        private void PanelLienzo_Paint(object? sender, PaintEventArgs e)
+        private void CanvasPanel_Paint(object? sender, PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.AntiAlias;
-
-            if (arbol.Root == null)
-            {
-                g.DrawString("Árbol vacío.", this.Font, Brushes.Black, 20, 20);
-                return;
-            }
-
-            int rootX = panelLienzo.Width / 2;
-            int rootY = 35;
-            int separacionX = Math.Min(panelLienzo.Width / 4, 230);
-
-            DibujarSubarbol(g, arbol.Root, rootX, rootY, separacionX);
-        }
-
-        private void DibujarSubarbol(Graphics g, Node current, int x, int y, int offsetX)
-        {
-            int radio = 18;
-            int offsetY = 60;
-
-            // Dibujar rama izquierda
-            if (current.Left != null)
-            {
-                int hijoX = x - offsetX;
-                int hijoY = y + offsetY;
-                g.DrawLine(Pens.Black, x, y, hijoX, hijoY);
-                DibujarSubarbol(g, current.Left, hijoX, hijoY, Math.Max(offsetX / 2, 25));
-            }
-
-            // Dibujar rama derecha
-            if (current.Right != null)
-            {
-                int hijoX = x + offsetX;
-                int hijoY = y + offsetY;
-                g.DrawLine(Pens.Black, x, y, hijoX, hijoY);
-                DibujarSubarbol(g, current.Right, hijoX, hijoY, Math.Max(offsetX / 2, 25));
-            }
-
-            // Dibujar círculo del nodo
-            Rectangle rect = new Rectangle(x - radio, y - radio, radio * 2, radio * 2);
-
-            // Si está resaltado se colorea en gris claro con borde más marcado, si no, blanco normal
-            Brush fondo = (nodoResaltado.HasValue && nodoResaltado.Value == current.Id)
-                ? Brushes.LightGray
-                : Brushes.White;
-
-            g.FillEllipse(fondo, rect);
-            g.DrawEllipse(Pens.Black, rect);
-
-            // Dibujar texto del Id
-            string texto = current.Id.ToString();
-            SizeF size = g.MeasureString(texto, this.Font);
-            g.DrawString(texto, this.Font, Brushes.Black, x - (size.Width / 2), y - (size.Height / 2));
-        }
-    }
-
-    // Panel con buffer doble para evitar parpadeo
-    public class DoubleBufferedPanel : Panel
-    {
-        public DoubleBufferedPanel()
-        {
-            this.DoubleBuffered = true;
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
-            this.UpdateStyles();
+            TreeRenderer.Draw(e.Graphics, tree.Head, highlightedNode, canvasPanel.Width, this.Font);
         }
     }
 }

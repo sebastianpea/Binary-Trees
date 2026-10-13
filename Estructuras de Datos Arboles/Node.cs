@@ -1,15 +1,15 @@
 namespace Estructuras_de_Datos_Arboles
 {
     // =========================================================================
-    // NODO BINARIO: Unidad básica de almacenamiento para árboles binarios.
-    // A diferencia de la lista circular (que solo tiene Next), aquí bifurca
-    // en dos caminos: Left (hijo izquierdo) y Right (hijo derecho).
+    // BINARY NODE: Fundamental unit of storage for binary trees.
+    // Unlike a singly linked or circular list (which only has Next),
+    // a tree node branches in two directions: Left and Right.
     // =========================================================================
     public class Node
     {
-        public int Id;          // Dato o identificador numérico
-        public Node? Left;      // Puntero/referencia al hijo izquierdo (menores)
-        public Node? Right;     // Puntero/referencia al hijo derecho (mayores)
+        public int Id;          // Stored data / numerical identifier
+        public Node? Left;      // Pointer/reference to left child (smaller values)
+        public Node? Right;     // Pointer/reference to right child (larger values)
 
         public Node(int id)
         {
