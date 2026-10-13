@@ -10,12 +10,12 @@ namespace Estructuras_de_Datos_Arboles
     // =========================================================================
     public class BinarySearchTree
     {
-        public Node? Head; // Puntero inicial / Raíz del árbol
+        public Node? Root; // Puntero inicial / Raíz del árbol
         public string UltimoMensajeCaso = ""; // Almacena el caso ejecutado para la presentación
 
         public BinarySearchTree()
         {
-            Head = null; // Árbol inicialmente vacío
+            Root = null; // Árbol inicialmente vacío
         }
 
         // =====================================================================
@@ -26,15 +26,15 @@ namespace Estructuras_de_Datos_Arboles
             Node newNode = new Node(id);
 
             // CASO 1: Árbol vacío. Head apunta a newNode.
-            if (Head == null)
+            if (Root == null)
             {
-                Head = newNode;
+                Root = newNode;
                 UltimoMensajeCaso = $"[Caso 1: Árbol Vacío] Se asignó Head = newNode ({id})";
                 return true;
             }
 
             // CASO 2 y 3: Recorrido con 'current' buscando posición libre
-            Node current = Head;
+            Node current = Root;
 
             while (true)
             {
@@ -75,13 +75,13 @@ namespace Estructuras_de_Datos_Arboles
         public bool Search(int id)
         {
             // CASO 1: Árbol vacío
-            if (Head == null)
+            if (Root == null)
             {
                 UltimoMensajeCaso = "[Caso 1: Búsqueda] Árbol vacío (Head == null).";
                 return false;
             }
 
-            Node? current = Head;
+            Node? current = Root;
 
             while (current != null)
             {
@@ -120,7 +120,7 @@ namespace Estructuras_de_Datos_Arboles
                 return false;
             }
 
-            Head = RemoveRecursive(Head, id);
+            Root = RemoveRecursive(Root, id);
             return true;
         }
 
@@ -185,7 +185,7 @@ namespace Estructuras_de_Datos_Arboles
         // =====================================================================
         public string GetInOrder()
         {
-            return InOrderRecursive(Head).Trim();
+            return InOrderRecursive(Root).Trim();
         }
 
         private string InOrderRecursive(Node? current)
@@ -196,7 +196,7 @@ namespace Estructuras_de_Datos_Arboles
 
         public string GetPreOrder()
         {
-            return PreOrderRecursive(Head).Trim();
+            return PreOrderRecursive(Root).Trim();
         }
 
         private string PreOrderRecursive(Node? current)
@@ -207,7 +207,7 @@ namespace Estructuras_de_Datos_Arboles
 
         public string GetPostOrder()
         {
-            return PostOrderRecursive(Head).Trim();
+            return PostOrderRecursive(Root).Trim();
         }
 
         private string PostOrderRecursive(Node? current)
@@ -221,7 +221,7 @@ namespace Estructuras_de_Datos_Arboles
         // =====================================================================
         public int Count()
         {
-            return CountRecursive(Head);
+            return CountRecursive(Root);
         }
 
         private int CountRecursive(Node? current)
@@ -232,7 +232,7 @@ namespace Estructuras_de_Datos_Arboles
 
         public int GetHeight()
         {
-            return HeightRecursive(Head);
+            return HeightRecursive(Root);
         }
 
         private int HeightRecursive(Node? current)

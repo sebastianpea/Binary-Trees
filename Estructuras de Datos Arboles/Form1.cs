@@ -177,7 +177,7 @@ namespace Estructuras_de_Datos_Arboles
 
         private void BtnClear_Click(object? sender, EventArgs e)
         {
-            arbol.Head = null;
+            arbol.Root = null;
             nodoResaltado = null;
             lblCaso.Text = "Estado: Árbol vaciado.";
             lblRecorrido.Text = "Recorrido: Ninguno";
@@ -203,7 +203,7 @@ namespace Estructuras_de_Datos_Arboles
             Graphics g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            if (arbol.Head == null)
+            if (arbol.Root == null)
             {
                 g.DrawString("Árbol vacío.", this.Font, Brushes.Black, 20, 20);
                 return;
@@ -213,7 +213,7 @@ namespace Estructuras_de_Datos_Arboles
             int rootY = 35;
             int separacionX = Math.Min(panelLienzo.Width / 4, 230);
 
-            DibujarSubarbol(g, arbol.Head, rootX, rootY, separacionX);
+            DibujarSubarbol(g, arbol.Root, rootX, rootY, separacionX);
         }
 
         private void DibujarSubarbol(Graphics g, Node current, int x, int y, int offsetX)
