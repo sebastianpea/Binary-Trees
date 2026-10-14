@@ -72,13 +72,13 @@ namespace Estructuras_de_Datos_Arboles
             btnClear.Click += BtnClear_Click;
 
             btnInOrder = new Button { Text = "InOrder", Location = new Point(500, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
-            btnInOrder.Click += (s, e) => ShowTraversal("InOrder", TreeTraversals.InOrder(tree.Head));
+            btnInOrder.Click += (s, e) => ShowTraversal("InOrder", TreeTraversals.InOrder(tree.Root));
 
             btnPreOrder = new Button { Text = "PreOrder", Location = new Point(585, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
-            btnPreOrder.Click += (s, e) => ShowTraversal("PreOrder", TreeTraversals.PreOrder(tree.Head));
+            btnPreOrder.Click += (s, e) => ShowTraversal("PreOrder", TreeTraversals.PreOrder(tree.Root));
 
             btnPostOrder = new Button { Text = "PostOrder", Location = new Point(670, 15), Width = 75, Height = 27, UseVisualStyleBackColor = true };
-            btnPostOrder.Click += (s, e) => ShowTraversal("PostOrder", TreeTraversals.PostOrder(tree.Head));
+            btnPostOrder.Click += (s, e) => ShowTraversal("PostOrder", TreeTraversals.PostOrder(tree.Root));
 
             // Informational status labels
             lblStatus = new Label { Text = "Status: Tree is empty.", Location = new Point(20, 55), AutoSize = true };
@@ -154,7 +154,7 @@ namespace Estructuras_de_Datos_Arboles
 
         private void BtnClear_Click(object? sender, EventArgs e)
         {
-            tree.Head = null;
+            tree.Root = null;
             highlightedNode = null;
             lblStatus.Text = "Status: Tree cleared (Head = null).";
             lblTraversal.Text = "Traversal: None";
@@ -177,7 +177,7 @@ namespace Estructuras_de_Datos_Arboles
         // =====================================================================
         private void CanvasPanel_Paint(object? sender, PaintEventArgs e)
         {
-            TreeRenderer.Draw(e.Graphics, tree.Head, highlightedNode, canvasPanel.Width, this.Font);
+            TreeRenderer.Draw(e.Graphics, tree.Root, highlightedNode, canvasPanel.Width, this.Font);
         }
     }
 }

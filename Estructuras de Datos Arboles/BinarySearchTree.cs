@@ -10,12 +10,12 @@ namespace Estructuras_de_Datos_Arboles
     // =========================================================================
     public class BinarySearchTree
     {
-        public Node? Head; // Root reference / entry point of the tree
+        public Node? Root; // Root reference / entry point of the tree
         public string LastCaseMessage = ""; // Stores the specific executed case description
 
         public BinarySearchTree()
         {
-            Head = null; // Initially empty tree
+            Root = null; // Initially empty tree
         }
 
         // =====================================================================
@@ -26,15 +26,15 @@ namespace Estructuras_de_Datos_Arboles
             Node newNode = new Node(id);
 
             // CASE 1: Tree is empty. Head points directly to newNode.
-            if (Head == null)
+            if (Root == null)
             {
-                Head = newNode;
+                Root = newNode;
                 LastCaseMessage = $"[Case 1: Empty Tree] Assigned Head = newNode ({id})";
                 return true;
             }
 
             // CASE 2 & 3: Traverse using 'current' to find an empty spot
-            Node current = Head;
+            Node current = Root;
 
             while (true)
             {
@@ -75,13 +75,13 @@ namespace Estructuras_de_Datos_Arboles
         public bool Search(int id)
         {
             // CASE 1: Tree is empty
-            if (Head == null)
+            if (Root == null)
             {
                 LastCaseMessage = "[Case 1: Search] Tree is empty (Head == null).";
                 return false;
             }
 
-            Node? current = Head;
+            Node? current = Root;
 
             while (current != null)
             {
@@ -120,7 +120,7 @@ namespace Estructuras_de_Datos_Arboles
                 return false;
             }
 
-            Head = RemoveRecursive(Head, id);
+            Root = RemoveRecursive(Root, id);
             return true;
         }
 
@@ -185,7 +185,7 @@ namespace Estructuras_de_Datos_Arboles
         // =====================================================================
         public int Count()
         {
-            return CountRecursive(Head);
+            return CountRecursive(Root);
         }
 
         private int CountRecursive(Node? current)
@@ -196,7 +196,7 @@ namespace Estructuras_de_Datos_Arboles
 
         public int GetHeight()
         {
-            return HeightRecursive(Head);
+            return HeightRecursive(Root);
         }
 
         private int HeightRecursive(Node? current)
