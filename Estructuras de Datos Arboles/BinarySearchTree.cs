@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Estructuras_de_Datos_Arboles
 {
@@ -29,7 +29,7 @@ namespace Estructuras_de_Datos_Arboles
             if (Root == null)
             {
                 Root = newNode;
-                LastCaseMessage = $"[Case 1: Empty Tree] Assigned Head = newNode ({id})";
+                LastCaseMessage = $"[Case 1: Empty Tree] Assigned Root = newNode ({id})";
                 return true;
             }
 
@@ -77,7 +77,7 @@ namespace Estructuras_de_Datos_Arboles
             // CASE 1: Tree is empty
             if (Root == null)
             {
-                LastCaseMessage = "[Case 1: Search] Tree is empty (Head == null).";
+                LastCaseMessage = "[Case 1: Search] Tree is empty (Root == null).";
                 return false;
             }
 
